@@ -47,39 +47,25 @@ app.use(express.json());
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 // ================================================================================
 
-// app.get("/api/notes", function(err, data) {
-//   fs.readFileSync("Develop/db/db.json", "utf8", (error, data) => {
-//     if (err) throw err;
-//     console.log(data);
-//   });
-//   console.log(data);
-//   notesData.json(data); // this doesn't work
-// });
 
 app.get("/api/notes", function(err, res) {
   let data;  // this is defined before the try/catch block so it still exists outside the block
   try {
     data = fs.readFileSync("Develop/db/db.json", "utf8");
     data = JSON.parse(data);
-    // NOW data is an array of objects!!  Yay - progress!!
-    // res.JSON(data); // this doesn't work
-    // console.log(notesData);
+    // NOW data is an array of objects!!  Yay!!
   } catch (err) {
     console.log("\n error (in app.get.catch):");
     console.error(err);
   }
   // this has to be outside of the try/catch block.  Scoping??
+  // send objects to browser
   res.json(data);
-
 });
 
 
 app.post("/api/notes", function(req, res) {
-  // // Note the code here. Our "server" will respond to requests and let users know if they have a table or not.
-  // // It will do this by sending out the value "true" have a table
-  // // req.body is available since we're using the body parsing middleware
-  // notesData.push(req.body);
-  // res.json(notesData);
+
   try {
     let data = fs.readFileSync("Develop/db/db.json", "utf8");
     data = JSON.parse(data);
