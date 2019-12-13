@@ -18,7 +18,7 @@ var app = express();
 // *******************************
 // do we need bodyParser ??
 //****************** */
-// // app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "Develop/public")));
 // var bodyParser = require('body-parser');
 
 // // configure app to use bodyParser()

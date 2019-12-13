@@ -51,6 +51,7 @@ var renderActiveNote = function() {
 
 // Get the note data from the inputs, save it to the db and update the view
 var handleNoteSave = function() {
+  console.log("begin handleNoteSave");
   var newNote = {
     title: $noteTitle.val(),
     text: $noteText.val()
@@ -105,6 +106,9 @@ var handleRenderSaveBtn = function() {
 
 // Render's the list of note titles
 var renderNoteList = function(notes) {
+  console.log("\nbegin renderNoteList");
+  console.log("Passed in: notes");
+  console.log(notes);
   $noteList.empty();
 
   var noteListItems = [];
@@ -127,6 +131,7 @@ var renderNoteList = function(notes) {
 
 // Gets notes from the db and renders them to the sidebar
 var getAndRenderNotes = function() {
+  console.log(getAndRenderNotes);
   return getNotes().then(function(data) {
     renderNoteList(data);
   });
