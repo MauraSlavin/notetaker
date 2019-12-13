@@ -58,6 +58,13 @@ app.get("/api/notes", function(req, res) {
   // In each of the below cases the user is shown an HTML page of content
   // ---------------------------------------------------------------------------
 
+  // app.get("/notes", function(req, res) {
+  //   // res.sendFile("c/Users/maura/bootcamp/homework/notetaker/Develop/public/notes.html");
+  //   // res.sendFile("C:/Windows/Users/maura/bootcamp/homework/notetaker/Develop/public/notes.html");
+  //   res.sendFile(path.join(__dirname, "../Develop/public/notes.html"));
+  // });
+
+  // If no matching route is found default to home
   app.get("/notes", function(req, res) {
     res.sendFile(path.join(__dirname, "Develop/public/notes.html"));
   });
