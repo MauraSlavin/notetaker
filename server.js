@@ -55,7 +55,6 @@ app.post("/api/notes", function(req, res) {
     fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
       // error handling
       if (err) throw err;
-      console.log("Success");
     });
 
     // change it back to an array of objects & send it back to the browser (client)
