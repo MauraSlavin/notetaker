@@ -51,12 +51,27 @@ var renderActiveNote = function() {
   }
 };
 
+// Random id generator based on code from
+//    https://stackoverflow.com/questions/23327010/how-to-generate-unique-id-with-node-js
+function generate() {
+  const _sym = "abcdefghijklmnopqrstuvwxyz1234567890";
+  var str = "";
+  const numChar = 10;
+
+  for (var i = 0; i < numChar; i++) {
+    str += _sym[parseInt(Math.random() * _sym.length)];
+  }
+
+  return str;
+}
+
 // Get the note data from the inputs, save it to the db and update the view
 var handleNoteSave = function() {
   console.log("begin handleNoteSave");
   var newNote = {
     title: $noteTitle.val(),
-    text: $noteText.val()
+    text: $noteText.val(),
+    id:  generate()
   };
 
   saveNote(newNote).then(function(data) {
@@ -69,6 +84,7 @@ var handleNoteSave = function() {
 var handleNoteDelete = function(event) {
   // prevents the click listener for the list from being called when the button inside of it is clicked
   event.stopPropagation();
+  console.log($(this).attr("data-id"));
 
   var note = $(this)
     .parent(".list-group-item")
@@ -122,13 +138,12 @@ var renderNoteList = function(notes) {
 
     var $li = $("<li class='list-group-item'>").data(note);
     // var $id = $("<span class='id d-none'>").text(note.id);
-    var $id = $(`<span class='id d-none'>${note.id}<span>;`);
-    var $span = $("<span>").text(note.title);
+    var $span = $(`<span class='keyId' data-id='${note.id}'>`).text(note.title);
     var $delBtn = $(
-      "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
+      `<i class='fas fa-trash-alt float-right text-danger delete-note keyId' data-id='${note.id}'>`
     );
 
-    $li.append($id, $span, $delBtn);
+    $li.append($span, $delBtn);
     noteListItems.push($li);
 
   }

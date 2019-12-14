@@ -1,111 +1,121 @@
-// ==============================================================================
-// DEPENDENCIES
-// Series of npm packages that we will use to give our server useful functionality
-// ==============================================================================
-
+// need express to interact with the front end
 const express = require("express");
+// need path for filename paths
 const path = require("path");
+// need fs to read and write to files
 const fs = require("fs");
-
-// ==============================================================================
-// EXPRESS CONFIGURATION
-// This sets up the basic properties for our express server
-// ==============================================================================
 
 // Tells node that we are creating an "express" server
 var app = express();
-
-// *******************************
-// do we need bodyParser ??
-//****************** */
-// var bodyParser = require('body-parser');
-
-// // configure app to use bodyParser()
-// // this will let us get the data from a POST
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
 
 // Sets an initial port. We"ll use this later in our listener
 var PORT = process.env.PORT || 8080;
 
 // Initialize notesData
 let notesData = [];
-//test data
-// let notesData = [
-//   { title: "first note", text: "stuff", id: "xyz" },
-//   { title: "second note", text: "more stuff", id: "vwx" }
-// ];
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// sets up the default directory to use in the html files
 app.use(express.static(path.join(__dirname, "Develop/public")));
 
-// ================================================================================
-// ROUTER
-// The below points our server to a series of "route" files.
-// These routes give our server a "map" of how to respond when users visit or request data from various URLs.
-// ================================================================================
+// routes
 
+// responding to the api call for all the notes, and sends results to the browser as an array of objects
 app.get("/api/notes", function(err, res) {
-  let data; // this is defined before the try/catch block so it still exists outside the block
   try {
-    data = fs.readFileSync("Develop/db/db.json", "utf8");
-    data = JSON.parse(data);
-    // NOW data is an array of objects!!  Yay!!
+    // reads the notes from the json file.
+    notesData = fs.readFileSync("Develop/db/db.json", "utf8");
+    // parses it so notesData is an array of objects
+    notesData = JSON.parse(notesData);
+
+    // error handling
   } catch (err) {
     console.log("\n error (in app.get.catch):");
     console.error(err);
   }
   // this has to be outside of the try/catch block.  Scoping??
   // send objects to browser
-  res.json(data);
+  res.json(notesData);
 });
 
+// writes the new note to the json file
 app.post("/api/notes", function(req, res) {
   try {
-    let data = fs.readFileSync("Develop/db/db.json", "utf8");
-    data = JSON.parse(data);
-    // NOW data is an array of objects!!  Yay - progress!!
-    notesData.push(req.body);
-    res.json(notesData);
-    // res.JSON(data);   // this doesn't work
-    // console.log(notesData);
+    // reads the json file
+    notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
+    // parses the data to get an array of objects
+    notesData = JSON.parse(notesData);
+    // add the new note to the array of note objects
+    notesData.push(req.body); // req.body - user input
+    // make it a string (stringify) so you can write it to the file
+    notesData = JSON.stringify(notesData);
+    // write the new notes to the file
+    fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
+      // error handling
+      if (err) throw err;
+      console.log("Success");
+    });
+
+    // change it back to an array of objects & send it back to the browser (client)
+    res.json(JSON.parse(notesData)); // returning data to client (browser)
+
+    // error handling
   } catch (err) {
-    console.log("\n error (in app.get.catch):");
+    throw err;
     console.error(err);
   }
-
-  // console.log(data);
-  // notesData.json(data); // this doesn't work
 });
 
 // Delete a note
 app.delete("/api/notes/:id", function(req, res) {
-  console.log("\nin app.delete");
-  console.log(notesData);
+  try {
+    // reads the json file
+    notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
+    // parses the data to get an array of objects
+    notesData = JSON.parse(notesData);
+    // delete the old note from the array of note objects
+
+    // based on code from...
+    //   ... https://stackoverflow.com/questions/10024866/remove-object-from-array-using-javascript
+    notesData = notesData.filter(function(note) {
+      return note.id != req.params.id;
+    });
+
+    // make it a string (stringify) so you can write it to the file
+    notesData = JSON.stringify(notesData);
+    // write the new notes to the file
+    fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
+      // error handling
+      if (err) throw err;
+      console.log("Success");
+    });
+
+    // change it back to an array of objects & send it back to the browser (client)
+    res.json(JSON.parse(notesData)); // returning data to client (browser)
+
+    // error handling
+  } catch (err) {
+    throw err;
+    console.error(err);
+  }
 });
 
 // HTML GET Requests
-// Below code handles when users "visit" a page.
-// In each of the below cases the user is shown an HTML page of content
-// ---------------------------------------------------------------------------
 
-// If no matching route is found default to home
+// Web page when the Get Started button is clicked.
 app.get("/notes", function(req, res) {
   res.sendFile(path.join(__dirname, "Develop/public/notes.html"));
 });
 
 // If no matching route is found default to home
-app.get("/", function(req, res) {
+app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "Develop/public/index.html"));
 });
 
-// =============================================================================
-// LISTENER
-// The below code effectively "starts" our server
-// =============================================================================
 
+// start the server
 app.listen(PORT, function() {
   console.log("App listening on PORT: " + PORT);
 });
