@@ -1,9 +1,8 @@
-console.log("In INDEX.JS");
-
-var $noteTitle = $(".note-title");
-var $noteText = $(".note-textarea");
-var $saveNoteBtn = $(".save-note");
-var $newNoteBtn = $(".new-note");
+// html elements that need to be referenced
+var $noteTitle = $(".note-title");   // title of note
+var $noteText = $(".note-textarea");  // text of note
+var $saveNoteBtn = $(".save-note");  // save note button
+var $newNoteBtn = $(".new-note");  // start new note button
 var $noteList = $(".list-container .list-group");
 
 // activeNote is used to keep track of the note in the textarea
@@ -12,7 +11,7 @@ var activeNote = {};
 // A function for getting all notes from the db
 var getNotes = function() {
   return $.ajax({
-    url: "/api/notes",
+    url: "/api/notes",  // url and method must match path & function in notetaker.js
     method: "GET"
   });
 };
@@ -36,8 +35,10 @@ var deleteNote = function(id) {
 
 // If there is an activeNote, display it, otherwise render empty inputs
 var renderActiveNote = function() {
-  $saveNoteBtn.hide();
 
+  $saveNoteBtn.hide();  // only show save button when changes have been made to save
+
+// the note can only be changed when it it active
   if (activeNote.id) {
     $noteTitle.attr("readonly", true);
     $noteText.attr("readonly", true);
@@ -54,10 +55,11 @@ var renderActiveNote = function() {
 // Random id generator based on code from
 //    https://stackoverflow.com/questions/23327010/how-to-generate-unique-id-with-node-js
 function generate() {
+  // characters to choose from
   const _sym = "abcdefghijklmnopqrstuvwxyz1234567890";
   var str = "";
   const numChar = 10;
-
+// concatenate one random character at a time to the string to be returned
   for (var i = 0; i < numChar; i++) {
     str += _sym[parseInt(Math.random() * _sym.length)];
   }
@@ -84,12 +86,12 @@ var handleNoteSave = function() {
 var handleNoteDelete = function(event) {
   // prevents the click listener for the list from being called when the button inside of it is clicked
   event.stopPropagation();
-  console.log($(this).attr("data-id"));
 
   var note = $(this)
     .parent(".list-group-item")
     .data();
 
+// de-activate the note if the active one is the one being deleted
   if (activeNote.id === note.id) {
     activeNote = {};
   }
@@ -124,17 +126,13 @@ var handleRenderSaveBtn = function() {
 
 // Render's the list of note titles
 var renderNoteList = function(notes) {
-  console.log("\nbegin renderNoteList");
-  console.log("Passed in: notes");
-  console.log(notes);
+  // clean out the note list
   $noteList.empty();
-
   var noteListItems = [];
 
+// for each note, build the html li and append it.
   for (var i = 0; i < notes.length; i++) {
     var note = notes[i];
-    console.log("\nnote:");
-    console.log(note);
 
     var $li = $("<li class='list-group-item'>").data(note);
     // var $id = $("<span class='id d-none'>").text(note.id);
@@ -147,24 +145,24 @@ var renderNoteList = function(notes) {
     noteListItems.push($li);
 
   }
-
+// append the list of notes to the list in the html
   $noteList.append(noteListItems);
 };
 
 // Gets notes from the db and renders them to the sidebar
 var getAndRenderNotes = function() {
-  console.log("getAndRenderNotes");
   return getNotes().then(function(data) {
     renderNoteList(data);
   });
 };
 
-$saveNoteBtn.on("click", handleNoteSave);
-$noteList.on("click", ".list-group-item", handleNoteView);
-$newNoteBtn.on("click", handleNewNoteView);
-$noteList.on("click", ".delete-note", handleNoteDelete);
-$noteTitle.on("keyup", handleRenderSaveBtn);
-$noteText.on("keyup", handleRenderSaveBtn);
+// listen for any click event that needs to be handled.
+$saveNoteBtn.on("click", handleNoteSave);   // Save a note
+$noteList.on("click", ".list-group-item", handleNoteView);  // View a selected note
+$newNoteBtn.on("click", handleNewNoteView);           // Start a new note
+$noteList.on("click", ".delete-note", handleNoteDelete);  // delete a note
+$noteTitle.on("keyup", handleRenderSaveBtn);   // display save button
+$noteText.on("keyup", handleRenderSaveBtn);    // display save button
 
 // Gets and renders the initial list of notes
 getAndRenderNotes();
