@@ -18,7 +18,6 @@ var app = express();
 // *******************************
 // do we need bodyParser ??
 //****************** */
-app.use(express.static(path.join(__dirname, "Develop/public")));
 // var bodyParser = require('body-parser');
 
 // // configure app to use bodyParser()
@@ -40,6 +39,7 @@ let notesData = [];
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "Develop/public")));
 
 // ================================================================================
 // ROUTER
@@ -47,9 +47,8 @@ app.use(express.json());
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 // ================================================================================
 
-
 app.get("/api/notes", function(err, res) {
-  let data;  // this is defined before the try/catch block so it still exists outside the block
+  let data; // this is defined before the try/catch block so it still exists outside the block
   try {
     data = fs.readFileSync("Develop/db/db.json", "utf8");
     data = JSON.parse(data);
@@ -63,9 +62,7 @@ app.get("/api/notes", function(err, res) {
   res.json(data);
 });
 
-
 app.post("/api/notes", function(req, res) {
-
   try {
     let data = fs.readFileSync("Develop/db/db.json", "utf8");
     data = JSON.parse(data);
@@ -84,18 +81,15 @@ app.post("/api/notes", function(req, res) {
 });
 
 // Delete a note
-app.delete("/api/notes/:id", function(req, res) {});
+app.delete("/api/notes/:id", function(req, res) {
+  console.log("\nin app.delete");
+  console.log(notesData);
+});
 
 // HTML GET Requests
 // Below code handles when users "visit" a page.
 // In each of the below cases the user is shown an HTML page of content
 // ---------------------------------------------------------------------------
-
-// app.get("/notes", function(req, res) {
-//   // res.sendFile("c/Users/maura/bootcamp/homework/notetaker/Develop/public/notes.html");
-//   // res.sendFile("C:/Windows/Users/maura/bootcamp/homework/notetaker/Develop/public/notes.html");
-//   res.sendFile(path.join(__dirname, "../Develop/public/notes.html"));
-// });
 
 // If no matching route is found default to home
 app.get("/notes", function(req, res) {
@@ -105,11 +99,6 @@ app.get("/notes", function(req, res) {
 // If no matching route is found default to home
 app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname, "Develop/public/index.html"));
-});
-
-// Delete a note
-app.delete("/api/notes/:id", function(req, res) {
-  // code to delete a note goes here.
 });
 
 // =============================================================================
