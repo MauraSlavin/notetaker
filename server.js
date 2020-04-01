@@ -37,6 +37,7 @@ app.get("/api/notes", function(err, res) {
   }
   // this has to be outside of the try/catch block.  Scoping??
   // send objects to browser
+  // notesData is an array of objects
   res.json(notesData);
 });
 

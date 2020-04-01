@@ -137,11 +137,14 @@ var renderNoteList = function(notes) {
     var $li = $("<li class='list-group-item'>").data(note);
     // var $id = $("<span class='id d-none'>").text(note.id);
     var $span = $(`<span class='keyId' data-id='${note.id}'>`).text(note.title);
+    var $editBtn = $(
+      `<i class='fas fa-pen float-right edit-note keyId' data-id='${note.id}'>`
+    );
     var $delBtn = $(
       `<i class='fas fa-trash-alt float-right text-danger delete-note keyId' data-id='${note.id}'>`
     );
 
-    $li.append($span, $delBtn);
+    $li.append($span, $delBtn, $editBtn);
     noteListItems.push($li);
 
   }
