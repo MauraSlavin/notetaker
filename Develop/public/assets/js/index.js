@@ -104,7 +104,9 @@ var handleNoteDelete = function(event) {
 
 // Sets the activeNote and displays it
 var handleNoteView = function() {
-  activeNote = $(this).data();
+  activeNote = $(this)
+    .parent(".list-group-item")
+    .data();
   renderActiveNote();
 };
 
@@ -135,7 +137,7 @@ var renderNoteList = function(notes) {
     var note = notes[i];
 
     var $li = $("<li class='list-group-item'>").data(note);
-    var $span = $(`<span class='keyId' data-id='${note.id}'>`).text(note.title);
+    var $span = $(`<span class='display-note keyId' data-id='${note.id}'>`).text(note.title);
     var $editBtn = $(
       `<i class='fas fa-pen float-right edit-note keyId' data-id='${note.id}'>`
     );
@@ -160,7 +162,7 @@ var getAndRenderNotes = function() {
 
 // listen for any click event that needs to be handled.
 $saveNoteBtn.on("click", handleNoteSave);   // Save a note
-$noteList.on("click", ".list-group-item", handleNoteView);  // View a selected note
+$noteList.on("click", ".display-note", handleNoteView);  // View a selected note
 $newNoteBtn.on("click", handleNewNoteView);           // Start a new note
 $noteList.on("click", ".delete-note", handleNoteDelete);  // delete a note
 $noteTitle.on("keyup", handleRenderSaveBtn);   // display save button
