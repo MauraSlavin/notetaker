@@ -8,6 +8,12 @@ var $noteList = $(".list-container .list-group");
 // activeNote is used to keep track of the note in the textarea
 var activeNote = {};
 
+// used to keep track of whether you are editting an existing note,
+// or creating a new note.  
+// true means an existing note is being editted; 
+// false means a new note is being created
+var editMode = false; 
+
 // A function for getting all notes from the db
 var getNotes = function() {
   return $.ajax({
@@ -18,6 +24,9 @@ var getNotes = function() {
 
 // A function for saving a note to the db
 var saveNote = function(note) {
+  console.log("========== begin saveNote =================");
+  console.log("note...");
+  console.log(note);
   return $.ajax({
     url: "/api/notes",
     data: note,
@@ -25,8 +34,22 @@ var saveNote = function(note) {
   });
 };
 
+// A function for updating a note to the db
+var updateNote = function(note) {
+  console.log("========== begin updateNote =================");
+  console.log("note...");
+  console.log(note);
+
+  return deleteNote(note.id)
+  .then(function() {
+    saveNote(note);
+  });
+};
+
 // A function for deleting a note from the db
 var deleteNote = function(id) {
+  console.log("========== begin deleteNote =================");
+  console.log("id: " + id);
   return $.ajax({
     url: "api/notes/" + id,
     method: "DELETE"
@@ -36,12 +59,21 @@ var deleteNote = function(id) {
 // If there is an activeNote, display it, otherwise render empty inputs
 var renderActiveNote = function() {
 
+  console.log("editMode: " + editMode);
+
   $saveNoteBtn.hide();  // only show save button when changes have been made to save
 
-// the note can only be changed when it it active
+// display the note if it exists; 
+// it can only be editted if editMode is true (meaning an existing note is being editted), 
+// or if there is no active note
   if (activeNote.id) {
-    $noteTitle.attr("readonly", true);
-    $noteText.attr("readonly", true);
+    if (editMode) {
+      $noteTitle.attr("readonly", false);
+      $noteText.attr("readonly", false);
+    } else {
+      $noteTitle.attr("readonly", true);
+      $noteText.attr("readonly", true);
+    };
     $noteTitle.val(activeNote.title);
     $noteText.val(activeNote.text);
   } else {
@@ -70,16 +102,51 @@ function generate() {
 // Get the note data from the inputs, save it to the db and update the view
 var handleNoteSave = function() {
   console.log("begin handleNoteSave");
+  console.log("editMode: " + editMode);
+  console.log("activeNote...");
+  console.log(activeNote);
+
   var newNote = {
     title: $noteTitle.val(),
     text: $noteText.val(),
-    id:  generate()
   };
 
-  saveNote(newNote).then(function(data) {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
+  if (editMode) {
+    newNote.id = activeNote.id;
+    console.log("In if editMode of handeNoteSave");
+    updateNote(newNote).then(function(data) {
+      activeNote = {};  // reset - no active note
+      editMode = false;  // not editting a current note
+      getAndRenderNotes();
+      renderActiveNote();
+    });
+  } else {
+    newNote.id = generate();
+    saveNote(newNote).then(function(data) {
+      getAndRenderNotes();
+      renderActiveNote();
+    });
+  };
+};
+
+// edit the clicked note
+var handleNoteEdit = function(event) {
+// prevents the click listener for the list from being called when the button inside of it is clicked
+  event.stopPropagation();
+
+  console.log("handleNoteEdit....");
+  activeNote = $(this)
+    .parent(".list-group-item")
+    .data();
+
+  console.log("activeNote:");
+  console.log(activeNote);
+
+
+  editMode = true;  // since current note is being editted
+  renderActiveNote();
+  console.log("end handleNoteEdit ....");
+
 };
 
 // Delete the clicked note
@@ -165,6 +232,7 @@ $saveNoteBtn.on("click", handleNoteSave);   // Save a note
 $noteList.on("click", ".display-note", handleNoteView);  // View a selected note
 $newNoteBtn.on("click", handleNewNoteView);           // Start a new note
 $noteList.on("click", ".delete-note", handleNoteDelete);  // delete a note
+$noteList.on("click", ".edit-note", handleNoteEdit);  // edit a note
 $noteTitle.on("keyup", handleRenderSaveBtn);   // display save button
 $noteText.on("keyup", handleRenderSaveBtn);    // display save button
 
