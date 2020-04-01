@@ -14,7 +14,7 @@ var activeNote = {};
 // false means a new note is being created
 var editMode = false; 
 
-// A function for getting all notes from the db
+// A function for getting all notes from the db file
 var getNotes = function() {
   return $.ajax({
     url: "/api/notes",  // url and method must match path & function in notetaker.js
@@ -22,11 +22,9 @@ var getNotes = function() {
   });
 };
 
-// A function for saving a note to the db
+// A function for saving a note to the db file
 var saveNote = function(note) {
-  console.log("========== begin saveNote =================");
-  console.log("note...");
-  console.log(note);
+
   return $.ajax({
     url: "/api/notes",
     data: note,
@@ -34,22 +32,16 @@ var saveNote = function(note) {
   });
 };
 
-// A function for updating a note to the db
+// A function for updating a note to the db file
 var updateNote = function(note) {
-  console.log("========== begin updateNote =================");
-  console.log("note...");
-  console.log(note);
-
   return deleteNote(note.id)
   .then(function() {
     saveNote(note);
   });
 };
 
-// A function for deleting a note from the db
+// A function for deleting a note from the db file
 var deleteNote = function(id) {
-  console.log("========== begin deleteNote =================");
-  console.log("id: " + id);
   return $.ajax({
     url: "api/notes/" + id,
     method: "DELETE"
@@ -58,8 +50,6 @@ var deleteNote = function(id) {
 
 // If there is an activeNote, display it, otherwise render empty inputs
 var renderActiveNote = function() {
-
-  console.log("editMode: " + editMode);
 
   $saveNoteBtn.hide();  // only show save button when changes have been made to save
 
@@ -99,12 +89,8 @@ function generate() {
   return str;
 }
 
-// Get the note data from the inputs, save it to the db and update the view
+// Get the note data from the inputs, save it to the db file and update the view
 var handleNoteSave = function() {
-  console.log("begin handleNoteSave");
-  console.log("editMode: " + editMode);
-  console.log("activeNote...");
-  console.log(activeNote);
 
   var newNote = {
     title: $noteTitle.val(),
@@ -113,7 +99,6 @@ var handleNoteSave = function() {
 
   if (editMode) {
     newNote.id = activeNote.id;
-    console.log("In if editMode of handeNoteSave");
     updateNote(newNote).then(function(data) {
       activeNote = {};  // reset - no active note
       editMode = false;  // not editting a current note
@@ -129,6 +114,7 @@ var handleNoteSave = function() {
       handleRenderSaveBtn();
     });
   };
+  alert('"' + newNote.title + '" saved.');
 };
 
 // edit the clicked note
@@ -136,20 +122,13 @@ var handleNoteEdit = function(event) {
 // prevents the click listener for the list from being called when the button inside of it is clicked
   event.stopPropagation();
 
-  console.log("handleNoteEdit....");
   activeNote = $(this)
     .parent(".list-group-item")
     .data();
 
-  console.log("activeNote:");
-  console.log(activeNote);
-
-
   editMode = true;  // since current note is being editted
   renderActiveNote();
   handleRenderSaveBtn();
-  console.log("end handleNoteEdit ....");
-
 };
 
 // Delete the clicked note
@@ -171,6 +150,7 @@ var handleNoteDelete = function(event) {
     renderActiveNote();
     handleRenderSaveBtn();
   });
+    alert('"' + note.title + '" deleted.');
 };
 
 // Sets the activeNote and displays it
@@ -199,24 +179,8 @@ var handleNewNoteView = function() {
 //    (either displaying an existing note that is not edittable
 //    or creating a new note that doesn't have both a title and text yet)
 var handleRenderSaveBtn = function() {
-  console.log("@@@@@  In handleRenderSaveBtn")
-  console.log("editMode:  " + editMode);
-  console.log("$noteTitle.val().trim():  " + $noteTitle.val().trim());
-  console.log("!$noteTitle.val().trim():  " + !$noteTitle.val().trim());
-  console.log("$noteText.val().trim()...");
-  console.log($noteText.val().trim());
-  console.log("!$noteText.val().trim():  " + !$noteText.val().trim());
-  console.log("activeNote...");
-  console.log(activeNote);
-
-  console.log("-----");
-  console.log("($noteTitle.val().trim() && $noteText.val().trim()): " + (!$noteTitle.val().trim() || !$noteText.val().trim()));
-  // console.log("activeNote == null: " + (activeNote == null));
-  // console.log("activeNote === null: " + (activeNote === null));
+  // isActiveNoteEmpty is true if there is no active note
   var isActiveNoteEmpty = !Object.keys(activeNote).length; 
-  console.log("activeNote is empty: " + isActiveNoteEmpty);
-  // var isMyObjectEmpty = !Object.keys(myObject).length;
-  console.log("-----");
 
   if (
     ($noteTitle.val().trim() && $noteText.val().trim()) &&
@@ -242,23 +206,27 @@ var renderNoteList = function(notes) {
     var note = notes[i];
 
     var $li = $("<li class='list-group-item'>").data(note);
+    // note title
     var $span = $(`<span class='display-note keyId' data-id='${note.id}'>`).text(note.title);
+    // edit button
     var $editBtn = $(
       `<i class='fas fa-pen float-right edit-note keyId' data-id='${note.id}'>`
     );
+    // delete button
     var $delBtn = $(
       `<i class='fas fa-trash-alt float-right text-danger delete-note keyId' data-id='${note.id}'>`
     );
 
+    // put it all together
     $li.append($span, $delBtn, $editBtn);
+    // and push it to the array of list items for each note
     noteListItems.push($li);
-
   }
 // append the list of notes to the list in the html
   $noteList.append(noteListItems);
 };
 
-// Gets notes from the db and renders them to the sidebar
+// Gets notes from the db file and renders them to the sidebar
 var getAndRenderNotes = function() {
   return getNotes().then(function(data) {
     renderNoteList(data);
