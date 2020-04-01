@@ -4,9 +4,9 @@ html, body {
   padding: 0;
 }
 
-.save-note {
-  /* display: none; */
-}
+/* .save-note {
+   display: none;
+} */
 
 .edit-note {
   color: blue;
@@ -21,7 +21,7 @@ html, body {
 }
 
 .note-textarea, .note-title {
-  color: #000000;
+  color:#18BC9C;
   width: 100%;
   outline: none;
   border: none;
@@ -37,6 +37,10 @@ html, body {
   height: 50px;
   margin-top: 13px;
   font-size: 3rem;
+}
+
+::placeholder {
+  opacity: .5;
 }
 
 .note-title:read-only, .note-textarea:read-only {

@@ -135,7 +135,6 @@ var renderNoteList = function(notes) {
     var note = notes[i];
 
     var $li = $("<li class='list-group-item'>").data(note);
-    // var $id = $("<span class='id d-none'>").text(note.id);
     var $span = $(`<span class='keyId' data-id='${note.id}'>`).text(note.title);
     var $editBtn = $(
       `<i class='fas fa-pen float-right edit-note keyId' data-id='${note.id}'>`
