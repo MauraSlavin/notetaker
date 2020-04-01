@@ -119,12 +119,14 @@ var handleNoteSave = function() {
       editMode = false;  // not editting a current note
       getAndRenderNotes();
       renderActiveNote();
+      handleRenderSaveBtn();
     });
   } else {
     newNote.id = generate();
     saveNote(newNote).then(function(data) {
       getAndRenderNotes();
       renderActiveNote();
+      handleRenderSaveBtn();
     });
   };
 };
@@ -145,6 +147,7 @@ var handleNoteEdit = function(event) {
 
   editMode = true;  // since current note is being editted
   renderActiveNote();
+  handleRenderSaveBtn();
   console.log("end handleNoteEdit ....");
 
 };
@@ -166,30 +169,65 @@ var handleNoteDelete = function(event) {
   deleteNote(note.id).then(function() {
     getAndRenderNotes();
     renderActiveNote();
+    handleRenderSaveBtn();
   });
 };
 
 // Sets the activeNote and displays it
 var handleNoteView = function() {
+  editMode = false;
   activeNote = $(this)
     .parent(".list-group-item")
     .data();
   renderActiveNote();
+  handleRenderSaveBtn();
 };
 
 // Sets the activeNote to and empty object and allows the user to enter a new note
 var handleNewNoteView = function() {
   activeNote = {};
   renderActiveNote();
+  handleRenderSaveBtn();
 };
 
-// If a note's title or text are empty, hide the save button
-// Or else show it
+// The save button should be displayed ...
+// Must be non-blanks in both title and text
+// If editMode is on, (editting an existing note)
+// or if editMode is off AND 
+//    there is no active note  (this is a new note)
+// Otherwise, the button is hidden
+//    (either displaying an existing note that is not edittable
+//    or creating a new note that doesn't have both a title and text yet)
 var handleRenderSaveBtn = function() {
-  if (!$noteTitle.val().trim() || !$noteText.val().trim()) {
-    $saveNoteBtn.hide();
-  } else {
+  console.log("@@@@@  In handleRenderSaveBtn")
+  console.log("editMode:  " + editMode);
+  console.log("$noteTitle.val().trim():  " + $noteTitle.val().trim());
+  console.log("!$noteTitle.val().trim():  " + !$noteTitle.val().trim());
+  console.log("$noteText.val().trim()...");
+  console.log($noteText.val().trim());
+  console.log("!$noteText.val().trim():  " + !$noteText.val().trim());
+  console.log("activeNote...");
+  console.log(activeNote);
+
+  console.log("-----");
+  console.log("($noteTitle.val().trim() && $noteText.val().trim()): " + (!$noteTitle.val().trim() || !$noteText.val().trim()));
+  // console.log("activeNote == null: " + (activeNote == null));
+  // console.log("activeNote === null: " + (activeNote === null));
+  var isActiveNoteEmpty = !Object.keys(activeNote).length; 
+  console.log("activeNote is empty: " + isActiveNoteEmpty);
+  // var isMyObjectEmpty = !Object.keys(myObject).length;
+  console.log("-----");
+
+  if (
+    ($noteTitle.val().trim() && $noteText.val().trim()) &&
+    (
+      (editMode) ||
+      (isActiveNoteEmpty) 
+    ))
+  {
     $saveNoteBtn.show();
+  } else {
+    $saveNoteBtn.hide();
   }
 };
 
@@ -238,3 +276,4 @@ $noteText.on("keyup", handleRenderSaveBtn);    // display save button
 
 // Gets and renders the initial list of notes
 getAndRenderNotes();
+handleRenderSaveBtn();
