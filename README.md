@@ -1,38 +1,107 @@
-# Unit 11 Express Homework: Note Taker
-https://polar-dawn-99284.herokuapp.com/notes
+# Note Taker
+Deployed app: https://polar-dawn-99284.herokuapp.com
+
+Github pages:  https://github.com/MauraSlavin/notetaker
 
 ## Description
 
-Create an application that can be used to write, save, and delete notes. This application will uses express backend and save and retrieve note data from a JSON file.
+Notetaker creates, saves, edits, and deletes notes. It uses express backend to read, write, and delete to and from a JSON file.
  
-* The application frontend was created, I built the backend and connected the two.
+The application frontend was created, I built the backend and connected the two.  I also added icons and functionality to edit notes.
 
-* The following HTML routes are used:
+## Technologies and tools used
 
-  * GET `/notes` returns the `notes.html` file.   ![Screen shot of /notes path.](./Develop/public/assets/notes.png)
+- Express
+- npm fs package
+- jQuery
+- Bootstrap
+- Javascript
+- node js
+- html
+- css
+- fontawesome
 
-  * GET `*` returns the `index.html` file.  ![Screen shot of the home page.](./Develop/public/assets/home.png)
+## Problem solved
 
-* The notes are stored in a `db.json` file on the backend The `fs` module is used to read from and write to this file.
+A tool to keep track of a lot of information in one easily accessible place in a simple user-friendly format to keep organized.
 
-* The following API routes were created:
+## Instructions
 
-  * GET `/api/notes` reads the `db.json` file and return all saved notes as JSON.  ![Screen shot of /api/notes (get)](./Develop/public/assets/getapi.png)
+Visit https://polar-dawn-99284.herokuapp.com.  This is the home page:
 
-  * POST `/api/notes` recieves a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client when the save icon is clicked.  Here is the screen shot before saving (with the save icon circled):    ![Screen shot before saving](./Develop/public/assets/before.png)
-  
-  And this is the screen shot after it's been saved, with the title circled:  ![Screen shot after saving](./Develop/public/assets/after.png)
+![Home page.](./Develop/public/assets/home.png).
 
-  * DELETE `/api/notes/:id` receives a query paramter containing the id of a note to delete when the trash can next to the corresponding title is clicked.  The note is deleted from the list and from the `db.json` file.
+Click on "Get Started" to work with the notes.
 
-## User Story
+The next screen looks like this:
 
-AS A user, I want to be able to write and save notes
+![Notes.](./Develop/public/assets/notes.png).
 
-I WANT to be able to delete notes I've written before
+Notes previously stored, along with icons to edit or delete, are displayed on the left.
+A place to create a new note is to the right.
 
-SO THAT I can organize my thoughts and keep track of tasks I need to complete
+### Messages
 
-## Business Context
+A message is displayed when a note is saved or deleted.  Examples:
 
-For users that need to keep track of a lot of information, it's easy to forget or be unable to recall something important. Being able to take persistent notes allows users to have written information available when needed.
+![Saved message.](./Develop/public/assets/savedmsg.png)  ![Deleted message.](./Develop/public/assets/deletedmsg.png)
+
+
+### To create a new note
+
+If "Note Title" is displayed in gray, you may begin typing the title and text of your note.
+Otherwise, click on the pencil icon on the top right to start a new note.
+When you start typing a new note, it will appear in teal.
+
+When a title and some text is entered, a save icon will appear in the top right:
+
+![Save a new note.](./Develop/public/assets/save.png)
+
+When you click on the save icon, the list is saved, and appears at the bottom of the list of notes on the left.
+
+![Saved note.](./Develop/public/assets/saved.png)
+
+"Note Title" is displayed in gray, indicating that a new note can be created.
+Note that the text turned teal when you are creating or updating a note.
+
+### To display a note
+
+Click on the title of a note to display it (without the ability to edit it).  Let's see the before and after screens for displaying the "Groceries" list:
+
+![Click on Groceries.](./Develop/public/assets/clickgroceries.png)
+
+then...
+
+![Display Groceries](./Develop/public/assets/displaygroceries.png)
+
+The "Groceries" note is in black, indicating that it cannot be editted.  You cannot change the title or text, and the save icon will not appear.
+
+### To edit a note
+
+Click on the pencil icon to the right of a note to enable editting of that note.  Let's edit the "Groceries" note:
+
+![Edit Groceries.](./Develop/public/assets/editgroceries.png)
+
+The "Groceries" note is displayed in teal, indicating that it is edittable.  The save icon appears on the top right of the screen.
+
+Let's change bananas to pasta, and save the changed list:
+
+![Save changed Groceries.](.Develop/public/assets/savegroceries.png)
+
+After the new "Groceries" note is saved, the screen looks like this:
+
+![Saved Groceries.](./Develop/public/assets/savedgroceries.png)
+
+Note that "Groceries" is now at the bottom of this list.
+
+### To delete a note
+
+Simply click on the trash can (delete) icon next to the note you want to delete.  Let's delete the "Groceries" note:
+
+![Delete Groceries.](./Develop/public/assets/deletegroceries.png)
+
+After the "Groceries" note is deleted, it no longer appears in the list on the screen:
+
+![Deleted Groceries.](./Develop/public/assets/deletedgroceries.png)
+
+
