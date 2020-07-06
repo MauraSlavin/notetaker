@@ -36,7 +36,6 @@ router.post("/notes", function(req, res) {
     notesData.push(req.body); // req.body - user input
     // make it a string (stringify) so you can write it to the file
     notesData = JSON.stringify(notesData);
-    console.log(notesData);
     // write the new notes to the file
     fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
       // error handling
